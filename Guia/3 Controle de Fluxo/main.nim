@@ -30,15 +30,13 @@ echo "Resposta Correta"
 
 # For Loop
 
-var lista = [1, 2, 3] 
+for i in 0..100 :
+    stdout.write i, " "             # 0 1 2 3 ... 98 99 100
 
-# for (int i = 0; i < lista.len; i++)  # Valor: 1
-for i in 0..lista.len - 1 :            # Valor: 2
-    echo("Valor: ", lista[i])          # Valor: 3
-
-# for (i, v) in enumerate(lista)       # Indice: 0 Valor: 1
-for i, v in lista :                    # Indice: 1 Valor: 2
+var sequencia = @[1, 2, 3]             # Indice: 0 Valor: 1
+for i, v in sequencia :                # Indice: 1 Valor: 2
     echo("Indice: ", i, " Valor: ", v) # Indice: 2 Valor: 3
 
-for i in lista : # for (int i : x)     # 1 2 3 
-    stdin.write(i, " ")
+for i in sequencia : 
+    stdin.write(i, " ")             # 1 2 3
+
