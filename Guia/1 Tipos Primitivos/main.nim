@@ -29,4 +29,15 @@
 # var int2str: string = $123
 # var jogo: string = "Touhou " & "7"
 
+# # Var, Let, Const
+
+# var variavel: int = 0
+# variavel = 10 ✔️
+ 
+# let constante: int = 0
+# constante = 9 ❌
+
+# const compTime: int = input("Sua idade") ❌
+# const compTime: int = 21 ✔️
+
 

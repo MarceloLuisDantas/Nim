@@ -26,6 +26,18 @@ Nim assim como a grande maioria das linguagens possui tanto char quanto string, 
 
 Não vale a pena falar sobre conversões de String para outros tipos agora pois isso é apenas questão de procurar no google “string to X nim”. Apenas saibam que Nim possui muita coisa para lidar com Strings na stdlib, o suficiente para no futuro ter um post apenas sobre isso.
 
-3º — Papo furado
+3º Var, Let e Const
+Nim possui 3 formas de declarar valores, variaveis com Var, constantes com Let, e constantes em tempo de compilação com Const. A diferença é simples.
+
+3.1 - Var
+Var são variáveis, elas podem ser criadas tanto em runtime ou em compiletime(que pra quem n sabe, runtime é durante a execução do código, e compiletime durante a compilação. Runtime seria pedir valores ou requisitar valores do servidor ou retorno de funções, valores que não são conhecidos durante a compilação, já compiletime é o oposto, valores que são conhecidos durante a compilação).
+
+3.2 - Let
+Let é similar a Var, porem é uma constante, ainda pode ser definida tanto em runtime quanto em compiletime.
+
+3.3 - Const
+Const por outro lado são constantes que precisam ser conhecidas em tempo de compilação. No caso
+
+4º — Papo furado
 
 Acredito que fui capaz de compreender e passar o básico e mais importante para um iniciante sobre os tipos primitivos, sim, existem Booleanos em Nim, porem o que muda de linguagem pra linguagem é que em uma é "True" com "T" maiúsculo e na outra é minúsculo, então apenas deixei por fora. Por hoje é so, continuem estudando e nos ajude ma tornar Nim algo real no Brasil.
