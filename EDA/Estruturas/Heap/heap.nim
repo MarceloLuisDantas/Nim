@@ -1,5 +1,10 @@
 import std/options
 
+type Filhos = enum
+    Dois, Zero,
+    UmEsquerda, 
+    UmDireita, 
+
 type Heap* = ref object
     lista: seq[int]
     tail: int
@@ -21,65 +26,46 @@ func getIndiceLeft*(self: Heap, indice: int): Option[int] =
         return none(int)
     return some(indiceEsquerdo)
 
-func left*(self: Heap, indice: int): Option[int] =
-    let indiceLeft = self.getIndiceLeft(indice).get
-    if (indiceLeft > self.tail) :
-        return none(int)
-    return some(self.lista[indiceLeft])
-
 func getIndiceRight*(self: Heap, indice: int): Option[int] =
     let indiceDireita: int = 2 * (indice + 1)
     if (indiceDireita > self.tail) :
         return none(int)
     return some(indiceDireita)
 
-func right*(self: Heap, indice: int): Option[int] =
-    let indiceDireita = self.getIndiceRight(indice).get
-    if (indiceDireita > self.tail) :
-        return none(int)
-    return some(self.lista[indiceDireita])
-
 func parent*(self: Heap, indice: int): Option[int] =
     if (indice > self.tail) :
         return none(int)
     return some((indice - 1) div 2)
 
-func temFilhos*(self: Heap, indice: int): bool =
-    var esquerda = self.left(indice)
-    if (esquerda.isSome) :
-        return true
+func temFilhos*(self: Heap, indice: int): Filhos =
+    var esquerda = self.getIndiceLeft(indice)
+    var direita = self.getIndiceRight(indice)
 
-    var direita = self.right(indice)
-    if (direita.isSome) :
-        return true
+    if (esquerda.isSome and direita.isSome) :
+        return Dois
 
-    return true
+    elif (esquerda.isSome and direita.isNone) :
+        return UmEsquerda
 
-proc swap*(self: Heap, i1: int, i2: int) = 
+    elif (esquerda.isNone and direita.isSome) :
+        return UmDireita
+
+    else :
+        return Zero
+
+proc swap(self: Heap, i1: int, i2: int) = 
     let sup = self.lista[i1]
     self.lista[i1] = self.lista[i2]
     self.lista[i2] = sup
 
-proc moveUp*(self: Heap, indice: int): bool =
+proc moveUp(self: Heap, indice: int): bool =
     let superior = self.parent(indice).get    
     if (self.lista[superior] < self.lista[indice]) :
         self.swap(indice, superior)
         return true
     return false
 
-proc downLeft*(self: Heap, indice: int): bool = 
-    if (let infeiorEsquerdo = self.getIndiceRight(indice); infeiorEsquerdo.isSome) :
-        self.swap(indice, infeiorEsquerdo.get)
-        return true
-    return false
-
-proc downRight*(self: Heap, indice: int): bool = 
-    if (let inferiorDireito = self.getIndiceLeft(indice); inferiorDireito.isSome) :
-        self.swap(indice, inferiorDireito.get)
-        return true
-    return false
-
-proc get*(self: Heap, indice: int): Option[int] =
+func `[]`*(self: Heap, indice: int): Option[int] =
     if (indice > self.tail) :
         return none(int)
     return some(self.lista[indice])
@@ -97,44 +83,72 @@ proc add*(self: Heap, valor: int): bool =
 
     return true
 
-proc heapify*(self: Heap): int =    
-    if (self.isEmpty) :
-        return -1
-
-    self.swap(0, self.tail )
-    result = self.get(self.tail).get
-    self.tail -= 1
-
-    var sup = 0
+proc heapify*(self: Heap, sup: sink int) =    
     while (true) :
         let iLeft = self.getIndiceLeft(sup)
         let iRight = self.getIndiceRight(sup)
+        let valorSup = self[sup].get
 
         if (iLeft.isSome and iRight.isSome) :
-            let vl = self.get(iLeft.get).get
-            let vr = self.get(iRight.get).get
-
-            if (vl >= vr) :
+            let vl = self[iLeft.get].get
+            let vr = self[iRight.get].get
+                
+            if (vl >= vr and vl > valorSup) :
                 self.swap(sup, iLeft.get)
                 sup = iLeft.get
-            else :
+
+            elif (vr > vl and vr > valorSup) :
                 self.swap(sup, iRight.get)
                 sup = iRight.get
 
-        elif (iLeft.isSome and self.get(iLeft.get).get > self.get(sup).get) :
+            else :
+                break
+
+        elif (iLeft.isSome and self[iLeft.get].get > valorSup) :
             self.swap(sup, iLeft.get)
             sup = iLeft.get
 
-        elif (iRight.isSome and self.get(iRight.get).get > self.get(sup).get) :
+        elif (iRight.isSome and self[iRight.get].get > valorSup) :
             self.swap(sup, iRight.get)
             sup = iRight.get
 
         else :
             break
 
+proc remove*(self: Heap): int =
+    if (self.isEmpty) :
+        return -1
 
+    self.swap(0, self.tail)
+    result = self[self.tail].get
+    self.tail -= 1
+    self.heapify(0)
+
+
+proc buildHeap*(self: Heap): int = 
+    for i in countdown(self.parent(self.tail).get, 0) :
+        self.heapify(i)
+
+proc newHeap*(valores: varargs[int]): Heap =
+    result = Heap(
+        lista: @valores,
+        tail: -1,
+        len: 0,
+    ) 
+
+    result.tail = result.lista.len - 1
+    result.len = result.lista.len
+    let _ = result.buildHeap()
+
+proc heapSort*(self: Heap): seq[int] = 
+    var sup = self.tail
+    while (self.tail != 0) :
+        let _ = self.remove
+    self.tail = sup
+    return self.lista
+    
 proc `$`*(self: Heap): string =
     for i in 0..self.tail :
-        result &= $self.get(i).get & " "
+        result &= $self[i].get & " "
     
 
